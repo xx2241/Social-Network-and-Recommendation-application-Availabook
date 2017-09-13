@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Availabook Social Network - Homepage</title>
+    {% load static %}
+    <link rel="shortcut icon" href="{% static 'homepage/img/group.png' %}">
+
+    <!-- Bootstrap Core CSS -->
+    {% load static %}
+    <link href="{% static 'homepage/css/bootstrap.css' %}" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    {% load static %}
+    <link href="{% static 'homepage/css/landing-page.css' %}" rel="stylesheet">
+    {% load static %}
+    <link href="{% static 'homepage/css/style.css' %}" rel="stylesheet">
+    {% load static %}
+    <link href="{% static 'homepage/css/custom.css' %}" rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    {% load static %}
+    <link href="{% static 'homepage/fonts/css/font-awesome.css' %}" rel="stylesheet" type="text/css">
+
+    <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css">
+
+</head>
+
+
+<!-- Navigation -->
+  <div class="navbar navbar-blue navbar-static-top">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+        <span class="sr-only">Toggle</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <!-- <a href="/" class="navbar-brand logo">AB</a> -->
+      <a href="/availabook" class="navbar-brand topnav" display="inline-block" style="margin-top:11px;color:#777;"><font>Availabook</font></a>
+    </div>
+    <nav class="collapse navbar-collapse" role="navigation">
+      <form class="navbar-form navbar-left">
+        <div class="input-group input-group-sm" style="max-width:360px;">
+          <input type="text" class="form-control" placeholder="Search" style="margin-top:4px;" name="srch-term" id="srch-term">
+          <div class="input-group-btn">
+            <button class="btn btn-default" type="submit" style="margin-top:4px;"><i class="glyphicon glyphicon-search"></i></button>
+          </div>
+        </div>
+      </form>
+
+      <ul class="nav navbar-nav">
+        <li>
+          <a style="font-size:15px;color:#777;" href="/availabook/home"><i class="glyphicon glyphicon-home" style="font-size:22px;color:#777;"></i> Home</a>
+        </li>
+        <li>
+          <a href="#postModal" style="font-size:15px;color:#777;" role="button" data-toggle="modal"><i class="glyphicon glyphicon-plus" style="font-size:22px;color:#777;"></i> Post</a>
+        </li>
+        {% if logedin %}
+        <li>
+          <a href="/availabook/profile" style="font-size:15px;color:#777;"><i class="glyphicon glyphicon-user" style="font-size:22px;color:#777;"></i> Profile</a>
+        </li>
+        {% endif %}
+      </ul>
+
+      <ul class="nav navbar-nav navbar-right">
+        {% if not logedin %}
+        <button id="home_login_btn" style="margin-top:11px;margin-right:20px;" onclick="document.getElementById('login').style.display='block'"  class="btn btn-default btn-sm"><i class="fa fa-sign-in fa-fw"></i> <span class="network-name">Login</span></button>
+        {% endif %}
+
+        {% if not logedin %}
+        <button id="home_signup_btn" style="margin-bottom:-3px;margin-right:20px;" onclick="document.getElementById('signup').style.display='block'"  class="btn btn-default btn-sm"><i class="fa fa-cloud fa-fw"></i> <span class="network-name">Sign up</span></button>
+        {% endif %}
+
+        {% if logedin %}
+        <a class="navbar-brand topnav" onclick="fbLogoutUser();" display="inline-block" style="margin-top:11px;color:#777;"><font> Hi {{fname}}</font></a>
+
+        <button id="home_logout_btn" style="margin-top:10px;margin-right:19px;" class="btn btn-default" onclick="fbLogoutUser();"><i class="fa fa-rocket fa-fw"></i> <span class="network-name">Logout</span></button>
+        {% endif %}
+      </ul>
+
+    </nav>
+  </div>
+
+<body>
+<div class="loader"></div>
+<script>
+  window.fbAsyncInit = function() {
+      FB.init({
+          appId      : '369715696758161',
+          cookie     : true,  // enable cookies to allow the server to access the session
+          xfbml      : true,  // parse social plugins on this page
+          version    : 'v2.8' // use graph api version 2.8
+      });
+  };
+
+  // Load the SDK asynchronously
+  (function(d, s, id) {
+      var js, fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) return;
+      js = d.createElement(s); js.id = id;
+      js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.9&appId=369715696758161";
+      fjs.parentNode.insertBefore(js, fjs);
+  }(document, 'script', 'facebook-jssdk'));
+
+  function fbLogoutUser() {
+      FB.getLoginStatus(function(response) {
+          console.log("getLoginStatus");
+          if (response && response.status === 'connected') {
+              FB.logout(function(response) {
+                  console.log("logging out");
+                  FB.Auth.setAuthResponse(null, 'unknown');
+                  document.location.reload();
+              });
+          }
+      });
+  }
+</script>
+
+  <!--post modal-->
+  <div id="postModal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="vertical-alignment-helper">
+    <div class="modal-dialog vertical-align-center">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            Post Your Events
+        </div>
+        <div class="modal-body">
+          <form class="form center-block">
+            <div class="form-group">
+              <textarea class="form-control input-lg" autofocus="" placeholder="What do you want to share?" id="post_content"></textarea>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <div style="text-align: left">
+            <label>Date and Time: </label>
+            <input id="dateandtime" type="datetime-local"/>
+          </div>
+          <br>
+          <div>
+            <ul class="pull-left list-inline"><li><a href=""><i class="glyphicon glyphicon-upload"></i></a></li><li><a href=""><i class="glyphicon glyphicon-camera"></i></a></li><li><a href=""><i class="glyphicon glyphicon-map-marker"></i></a></li></ul>
+            <button id="post_btn" class="btn btn-primary btn-sm" data-dismiss="modal" aria-hidden="true">Post</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+    </div>
+  </div>
+
+  <div id="login" class="modal">
+    <div class="modal-content animate">
+      <div class="imgcontainer">
+        <span onclick="document.getElementById('login').style.display='none'" class="close" title="Close Modal">&times;</span>
+      </div>
+      <div class="container">
+        <label><b>Email Address</b></label>
+        <br>
+        <input type="text" placeholder="Email Address" id="login_id" required>
+        <br>
+        <label><b>Password</b></label>
+        <br>
+        <input type="password" placeholder="Password" id="login_psw" required>
+        <br>
+        <button type="submit" id="login_btn" style="margin-right:137px" class="subbtn">Login</button>
+        <button type="button" onclick="document.getElementById('login').style.display='none'" class="cancelbtn">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+
+  <div id="signup" class="modal">
+    <!-- <form method = "POST" class="modal-content animate" action = "{% url 'availabook:signup' %}"> {% csrf_token %} -->
+    <div class="modal-content animate">
+      <div class="imgcontainer">
+        <span onclick="document.getElementById('signup').style.display='none'" class="close" title="Close Modal">&times;</span>
+      </div>
+      <div class="container">
+        <label><b>Email Address</b></label>
+        <br>
+        <input type="text" placeholder="Email Address" id="signup_email" required>
+        <br>
+        <label><b>Password</b></label>
+        <br>
+        <input type="password" placeholder="Password" id="signup_psw" required>
+        <br>
+        <label><b>Verify Password</b></label>
+        <br>
+        <input type="password" placeholder="Password" id="signup_psw_a" required>
+        <br>
+        <label><b>First Name</b></label>
+        <br>
+        <input type="text" placeholder="First Name" id="signup_fn" required>
+        <br>
+        <label><b>Last Name</b></label>
+        <br>
+        <input type="text" placeholder="Last Name" id="signup_ln" required>
+        <br>
+        <label><b>Age</b></label>
+        <br>
+        <input type="text" placeholder="Integer" id="signup_age" required>
+        <br>
+        <label><b>City</b></label>
+        <br>
+        <input type="text" placeholder="City" id="signup_city" required>
+        <br>
+        <label><b>Zipcode</b></label>
+        <br>
+        <input type="text" placeholder="Zipcode" id="signup_zipcode" required>
+        <br>
+        <button type="submit" id="signup_btn" style="margin-right:133px" class="subbtn">Sign up</button>
+        <button type="button" onclick="document.getElementById('signup').style.display='none'" class="cancelbtn">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="container" id="events_containter" style="padding-top:60px">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="panel panel-default">
+          <div class="panel-heading" style="background:#7a7a7a;">
+            <h3 class="panel-title">Post Wall</h3>
+          </div>
+          <div class="panel-body">
+            <form method="POST" action="{% url 'availabook:post_event' %}"> {% csrf_token %}
+              <div class="form-group">
+                <textarea class="form-control" name="post_content" placeholder="Share your events on the wall..."></textarea>
+              </div>
+              <div class="pull-left">
+                <label>Date and Time: </label>
+                <input name="dateandtime" type="datetime-local" />
+                <button id="outer_post_btn" type="submit" class="btn btn-default">Post</button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+          {% for event, email, name, picture in zipped_list %}
+            <div class="panel panel-default post">
+              <div class="panel-body">
+                <div class="row">
+                  <div class="col-sm-2">
+                    {% load static %}
+                    <a href="profile.html" class="post-avatar thumbnail"><img src="{{ picture }}" alt=""><div class="text-center">{{ name }}</div></a>
+                    <div>
+                    <p>{{ email }}</p>
+                    </div>
+                  </div>
+                  <div class="col-sm-10">
+                    <div class="bubble">
+                      <div class="pointer">
+                        <p>{{ event.content }}</p>
+                      </div>
+                      <div class="pointer-border"></div>
+                    </div>
+                    <br>
+                    <div>
+                    <p>Date and Time: {{ event.date }} {{ event.time }}</p>
+                    <div id={{event.EId}} class="faves">{{ event.fave_num }}-likes</div>
+                    </div>
+                    <div class="pull-left btn-group-md">
+                      <button id="{{ event }}_like_btn" class="btn btn-default btn-md" value={{event.EId}} onclick='click_like("{{ event }}")'><i class="fa fa-heart" aria-hidden="true"></i> Like</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+
+  <footer style="border-top: 7px solid #7a7a7a;">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-12">
+          <ul class="list-inline">
+            <li>
+              <a href="#">Home</a>
+            </li>
+            <li class="footer-menu-divider">&sdot;</li>
+            <li>
+              <a href="#about">About</a>
+            </li>
+            <li class="footer-menu-divider">&sdot;</li>
+            <li>
+              <a href="#services">Services</a>
+            </li>
+            <li class="footer-menu-divider">&sdot;</li>
+            <li>
+              <a href="#contact">Contact</a>
+            </li>
+            </ul>
+              <p class="copyright text-muted small">Copyright &copy; Availabook 2017. All Rights Reserved</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+    {% load static %}
+    <script src= "{% static 'homepage/js/bootstrap.js' %}"></script>
+    {% load static %}
+    <script src= "{% static 'homepage/js/csrf.js' %}"></script>
+    {% load static %}
+    <script src= "{% static 'homepage/js/availabook.js' %}"></script>
+
+  </body>
+</html>

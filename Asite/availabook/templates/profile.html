@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Availabook Social Network - Profile Page</title>
+  {% load static %}
+  <link rel="shortcut icon" href="{% static 'homepage/img/group.png' %}">
+
+  <!-- Bootstrap core CSS -->
+  {% load static %}
+  <link href="{% static 'profile/css/profile.css' %}" rel="stylesheet">
+  {% load static %}
+  <link href="{% static 'homepage/css/bootstrap.css' %}" rel="stylesheet">
+
+  <!-- Custom styles for this template -->
+  {% load static %}
+  <link href="{% static 'homepage/css/landing-page.css' %}" rel="stylesheet">
+  {% load static %}
+  <link href="{% static 'homepage/css/style.css' %}" rel="stylesheet">
+  {% load static %}
+  <link href="{% static 'homepage/css/custom.css' %}" rel="stylesheet">
+
+  <script data-require="jquery@1.11.3" data-semver="1.11.3" src="https://code.jquery.com/jquery-1.11.3.js"></script>
+  <script src="http://formvalidation.io/vendor/formvalidation/js/formValidation.min.js"></script>
+  <script src="http://formvalidation.io/vendor/formvalidation/js/framework/bootstrap.min.js"></script>
+
+  <script data-require="bootstrap@3.3.6" data-semver="3.3.6" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+  <script data-require="angular.js@1.5.7" data-semver="1.5.7" src="https://code.angularjs.org/1.5.7/angular.js"></script>
+  <script data-require="bootbox.js@4.4.0" data-semver="4.4.0" src="https://github.com/makeusabrew/bootbox/releases/download/v4.4.0/bootbox.min.js"></script>
+
+  <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css">
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+</head>
+
+<!-- Navigation -->
+  <div class="navbar navbar-blue navbar-static-top">
+    <div class="navbar-header">
+      <button class="navbar-toggle" type="button" data-toggle="collapse" data-target=".navbar-collapse">
+        <span class="sr-only">Toggle</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <!-- <a href="/" class="navbar-brand logo">AB</a> -->
+      <a href="/availabook" class="navbar-brand topnav" display="inline-block" style="margin-top:11px;color:#777"><font>Availabook</font></a>
+    </div>
+    <nav class="collapse navbar-collapse" role="navigation">
+      <form class="navbar-form navbar-left">
+        <div class="input-group input-group-sm" style="max-width:360px;">
+          <input type="text" class="form-control" placeholder="Search" style="margin-top:4px;" name="srch-term" id="srch-term">
+          <div class="input-group-btn">
+            <button class="btn btn-default" type="submit" style="margin-top:4px;"><i class="glyphicon glyphicon-search"></i></button>
+          </div>
+        </div>
+      </form>
+
+      <ul class="nav navbar-nav">
+        <li>
+          <a style="font-size:15px;color:#777;" href="/availabook/home"><i class="glyphicon glyphicon-home" style="font-size:22px;color:#777;"></i> Home</a>
+        </li>
+        <li>
+          <a href="/availabook/profile" style="font-size:15px;color:#777;"><i class="glyphicon glyphicon-user" style="font-size:22px;color:#777;"></i> Profile</a>
+        </li>
+      </ul>
+
+      <ul class="nav navbar-nav navbar-right">
+        {% if not logedin %}
+        <button id="home_login_btn" style="margin-top:11px;margin-right:20px;" onclick="document.getElementById('login').style.display='block'"  class="btn btn-default btn-sm"><i class="fa fa-sign-in fa-fw"></i> <span class="network-name">Login</span></button>
+        {% endif %}
+
+        {% if not logedin %}
+        <button id="home_signup_btn" style="margin-bottom:-3px;margin-right:20px;" onclick="document.getElementById('signup').style.display='block'"  class="btn btn-default btn-sm"><i class="fa fa-cloud fa-fw"></i> <span class="network-name">Sign up</span></button>
+        {% endif %}
+
+        {% if logedin %}
+        <a class="navbar-brand topnav" onclick="fbLogoutUser();" display="inline-block" style="margin-top:11px;color:#777;"><font> Hi {{fname}}</font></a>
+        <button id="home_logout_btn" style="margin-top:10px;margin-right:19px;" class="btn btn-default" onclick="fbLogoutUser();"><i class="fa fa-rocket fa-fw"></i> <span class="network-name">Logout</span></button>
+        {% endif %}
+      </ul>
+
+    </nav>
+  </div>
+
+<body>
+<div class="loader"></div>
+<script>
+  window.fbAsyncInit = function() {
+      FB.init({
+          appId      : '369715696758161',
+          cookie     : true,  // enable cookies to allow the server to access the session
+          xfbml      : true,  // parse social plugins on this page
+          version    : 'v2.8' // use graph api version 2.8
+      });
+  };
+
+  // Load the SDK asynchronously
+  (function(d, s, id) {
+      var js, fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) return;
+      js = d.createElement(s); js.id = id;
+      js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.9&appId=369715696758161";
+      fjs.parentNode.insertBefore(js, fjs);
+  }(document, 'script', 'facebook-jssdk'));
+
+  function fbLogoutUser() {
+      FB.getLoginStatus(function(response) {
+          console.log("getLoginStatus");
+          if (response && response.status === 'connected') {
+              FB.logout(function(response) {
+                  console.log("logging out");
+                  FB.Auth.setAuthResponse(null, 'unknown');
+                  document.location.reload();
+              });
+          }
+      });
+  }
+</script>
+
+  <div class="mainbody container-fluid">
+    <div class="row">
+      <div style="padding-top:50px;"> </div>
+        <div class="col-sm-4">
+          <div class="panel panel-default">
+            <div class="panel-body">
+              <div class="media">
+                <div align="center">
+                  <form id='formid' method="post" enctype="multipart/form-data" action = "{% url 'availabook:upload' %}"> {% csrf_token %}
+                    <div class="image-upload">
+                      <label for="file-input">
+                        {% if link %}
+                        <img src="{{link}}" height="350" width="350"/>
+                        {% else %}
+                        <img src="https://s3.amazonaws.com/image-availabook/default" height="350" width="350"/>
+                        {% endif %}
+                      </label>
+                      <input id="file-input" style="display: none;" type="file" name='pic'/>
+                    </div>
+                  </form>
+                </div>
+                <div class="media-body">
+                  <td><button type="button" data-id="1" id="editButton" class="btn btn-default editButton">Edit Personal Info</button></td>
+                  <hr>
+                  <h3><strong>First Name</strong></h3>
+                  {% if fname %}
+                  <p><div id="fn">{{fname}}</div></p>
+                  <hr>
+                  <h3><strong>Last Name</strong></h3>
+                  <p><div id="ln">{{lname}}</div></p>
+                  <hr>
+                  <h3><strong>Age</strong></h3>
+                  <p><div id="age">{{age}}</div></p>
+                  <hr>
+                  <h3><strong>City</strong></h3>
+                  <p><div id="ct">{{city}}</div></p>
+                  <hr>
+                  <h3><strong>Zipcode</strong></h3>
+                  <p><div id="zip">{{zipcode}}</div></p>
+
+                  {% endif %}
+
+                  <form id="userForm" method="post" class="form-horizontal" style="display: none;">
+                    <div class="form-group">
+                      <label class="col-xs-3 control-label">ID</label>
+                      <div class="col-xs-3">
+                        <input type="text" class="form-control" name="id" disabled="disabled" />
+                      </div>
+                    </div>
+
+                    <div class="form-group">
+                      <label class="col-xs-3 control-label">First name</label>
+                      <div class="col-xs-5">
+                        <input type="text" class="form-control" name="fname" />
+                      </div>
+                    </div>
+
+                    <div class="form-group">
+                      <label class="col-xs-3 control-label">Last name</label>
+                      <div class="col-xs-5">
+                        <input type="text" class="form-control" name="lname" />
+                      </div>
+                    </div>
+
+                    <div class="form-group">
+                      <label class="col-xs-3 control-label">Age</label>
+                      <div class="col-xs-5">
+                        <input type="text" class="form-control" name="age" />
+                      </div>
+                    </div>
+
+                    <div class="form-group">
+                      <label class="col-xs-3 control-label">City</label>
+                      <div class="col-xs-5">
+                        <input type="text" class="form-control" name="city" />
+                      </div>
+                    </div>
+
+                    <div class="form-group">
+                      <label class="col-xs-3 control-label">Zipcode</label>
+                      <div class="col-xs-5">
+                        <input type="text" class="form-control" name="zipcode" />
+                      </div>
+                    </div>
+
+                    <div class="form-group">
+                      <div class="col-xs-5 col-xs-offset-3">
+                        <button type="submit" class="btn btn-default">Save</button>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-9">
+          <div class="panel panel-default">
+            <div class="panel-body">
+              <span>
+                <h1 class="panel-title" style="font-size:30px;">{{ fname }} {{ lname }}<small>{{ email }}</small> <i class="fa fa-check text-success" aria-hidden="true" data-toggle="tooltip" data-placement="bottom" title="John Doe is sharing with you"></i></h1>
+              </span>
+              <hr>
+              <span class="pull-left">
+                <a href="#user_posts" class="btn btn-link" style="text-decoration:none;"><i class="fa fa-fw fa-files-o" aria-hidden="true"></i> Posts <span class="badge">{{ zipped_list|length }}</span></a>
+              </span>
+            </div>
+          </div>
+          <hr>
+          <!-- Simple post content example. -->
+          <div id="user_posts">
+          {% for post, event in zipped_list %}
+          <div class="panel panel-default">
+            <div class="panel-body">
+              <div class="pull-left">
+                  <img class="media-object img-circle" src={{ link }} width="50px" height="50px" style="margin-right:8px; margin-top:-5px;">
+              </div>
+              <h4><a style="text-decoration:none;"><strong>{{fname}} {{lname}}</strong></a> – <small><small><a style="text-decoration:none; color:grey;"><i><i class="fa fa-clock-o" aria-hidden="true"></i> event posted on {{ post.post_time }}</i></a></small></small></h4>
+              <span>
+              </span>
+              <hr>
+              <div class="post-content">
+                <p>{{ event.content }}</p>
+              </div>
+              <hr>
+              <div>
+                <div class="pull-left">
+                  <p class="text-muted" style="margin-left:5px;"><i class="fa fa-globe" aria-hidden="true"></i> Date and Time: {{ event.date }} {{ event.time }}</p>
+                </div>
+                <div class="pull-right btn-group-xs">
+                  <p>{{ event.fave_num }}-likes</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+</body>
+
+  <footer style="border-top: 7px solid #7a7a7a;">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-12">
+          <ul class="list-inline">
+            <li>
+              <a href="#">Home</a>
+            </li>
+            <li class="footer-menu-divider">&sdot;</li>
+            <li>
+              <a href="#about">About</a>
+            </li>
+            <li class="footer-menu-divider">&sdot;</li>
+            <li>
+              <a href="#services">Services</a>
+            </li>
+            <li class="footer-menu-divider">&sdot;</li>
+            <li>
+              <a href="#contact">Contact</a>
+            </li>
+            </ul>
+              <p class="copyright text-muted small">Copyright &copy; Availabook 2017. All Rights Reserved</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+
+    {% load static %}
+    <script src= "{% static 'profile/js/bootstrap.js' %}"></script>
+    {% load static %}
+    <script src= "{% static 'profile/js/availabook.js' %}"></script>
+    {% load static %}
+    <script src= "{% static 'profile/js/csrf.js' %}"></script>
+    {% load static %}
+    <script src= "{% static 'profile/js/profile.js' %}"></script>
+
+  </body>
+</html>
